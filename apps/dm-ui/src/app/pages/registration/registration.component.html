@@ -4,10 +4,10 @@
     <h1 class="row justify-content-center display-2">Change Makers</h1>
     <div class="col-md-12 col-lg-10">
       <div class="wrap d-md-flex">
-        <!-- Photo by Diva Plavalaguna from Pexels: https://www.pexels.com/photo/close-up-of-people-bumping-fists-6146704/ -->
+        <!-- Photo by Cytonn Photography from Pexels: https://www.pexels.com/photo/person-holding-gray-twist-pen-and-white-printer-paper-on-brown-wooden-table-955389/ -->
         <div
           class="img"
-          style="background-image: url(assets/images/login.jpg)"
+          style="background-image: url(assets/images/registration.jpg)"
         ></div>
         <div class="login-wrap p-4 p-md-5">
           <div class="d-flex">
@@ -32,6 +32,7 @@
                 class="form-control"
                 placeholder="Username"
                 required=""
+                autocomplete="off"
               />
             </div>
             <div class="form-group mb-3">
@@ -53,40 +54,55 @@
               />
             </div>
             <div class="form-group mb-3">
-              <label class="label" for="name">Country</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Country"
-                required=""
-              />
+              <label class="label" for="year">Year of birth</label>
+              <ng-select
+                [items]="birthYears"
+                labelForId="year"
+                autocomplete="off"
+              >
+              </ng-select>
             </div>
+
             <div class="form-group mb-3">
-              <label class="label" for="name"
+              <label class="label" for="city"
                 >Nearest city, town or village</label
               >
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Nearest city, town or village"
-                required=""
-              />
+              <ng-select
+                [items]="locations$ | async"
+                bindLabel="name"
+                bindValue="name"
+                [typeahead]="locationsInput$"
+                autocomplete="off"
+                labelForId="city"
+                (change)="onLocationChange($event)"
+              >
+                <ng-template ng-label-tmp let-item="item">
+                  <span
+                    >{{ item.name }} (<small *ngIf="!!item.region"
+                      >{{ item.region?.name }}, </small
+                    ><small>{{ item.country?.name }}</small
+                    >)
+                  </span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div>
+                    <span>{{ item.name }}</span>
+                  </div>
+                  <small *ngIf="!!item.region">{{ item.region?.name }}, </small
+                  ><small>{{ item.country?.name }}</small>
+                </ng-template>
+              </ng-select>
             </div>
             <div class="form-group mb-3">
-              <label class="label" for="name">Year of birth</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Year of birth"
-                required=""
-              />
-            </div>
-            <div class="form-group d-md-flex">
-              <div class="">
-                <label class="checkbox-wrap checkbox-primary mb-0">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="flexCheckDefault"
+                />
+                <label class="form-check-label" for="flexCheckDefault">
                   Accept <a href="#">terms and conditions</a>
-                  <input type="checkbox" checked="" />
-                  <span class="checkmark"></span>
                 </label>
               </div>
             </div>
@@ -99,9 +115,6 @@
               </button>
             </div>
           </form>
-          <!-- <p class="text-center">
-            Not a member? <a data-toggle="tab" href="#signup">Sign Up</a>
-          </p> -->
         </div>
       </div>
     </div>
