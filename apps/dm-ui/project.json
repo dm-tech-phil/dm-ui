@@ -16,7 +16,7 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/dm-ui/tsconfig.app.json",
         "assets": ["apps/dm-ui/src/favicon.ico", "apps/dm-ui/src/assets"],
-        "styles": ["apps/dm-ui/src/styles.scss"],
+        "styles": ["apps/dm-ui/src/styles.scss", "mapbox-gl/dist/mapbox-gl.css"],
         "scripts": []
       },
       "configurations": {
