@@ -1,57 +1,123 @@
 <div class="container">
   <div class="row justify-content-center">
-    <img style="width: 150px" src="assets/images/logo-DM-dark.png" />
-    <h1 class="row justify-content-center display-2">Change Makers</h1>
     <div class="col-md-12 col-lg-10">
+      <div
+        *ngIf="(errorMessages$ | async)?.length ?? 0 > 0"
+        class="alert alert-danger"
+        role="alert"
+      >
+        <ul class="error-messages">
+          <li *ngFor="let message of errorMessages$ | async">
+            {{ message.message }}
+          </li>
+        </ul>
+      </div>
+
       <div class="wrap d-md-flex">
         <!-- Photo by Cytonn Photography from Pexels: https://www.pexels.com/photo/person-holding-gray-twist-pen-and-white-printer-paper-on-brown-wooden-table-955389/ -->
         <div
           class="img"
           style="background-image: url(assets/images/registration.jpg)"
         ></div>
-        <div class="login-wrap p-4 p-md-5">
+        <div class="fader-gradient-background login-wrap p-4 p-md-5">
           <div class="d-flex">
             <div>
               <h3 class="mb-4">Registration</h3>
             </div>
           </div>
-          <form action="#" class="signin-form">
+          <form [formGroup]="form" class="signin-form" novalidate>
             <div class="form-group mb-3">
-              <label class="label" for="name">Email address</label>
+              <label class="label" for="email">Email address</label>
               <input
                 type="text"
                 class="form-control"
+                [ngClass]="{ 'is-invalid': form.get('email')?.errors }"
                 placeholder="Email"
                 required=""
+                labelForId="email"
+                formControlName="email"
               />
+              <div class="invalid-feedback">
+                Please enter a valid email address
+              </div>
             </div>
             <div class="form-group mb-3">
-              <label class="label" for="name">Username (handle)</label>
+              <label class="label" for="displayName">Username (handle)</label>
               <input
                 type="text"
                 class="form-control"
-                placeholder="Username"
+                [ngClass]="{ 'is-invalid': form.get('displayName')?.errors }"
+                placeholder="Display Name"
                 required=""
                 autocomplete="off"
+                labelForId="displayName"
+                formControlName="displayName"
               />
+              <div class="invalid-feedback">
+                The display name will be displayed when you publish posts or
+                comments and has to be unique
+              </div>
             </div>
             <div class="form-group mb-3">
               <label class="label" for="password">New Password</label>
               <input
                 type="password"
                 class="form-control"
+                [ngClass]="{ 'is-invalid': form.get('password')?.errors }"
                 placeholder="Password"
                 required=""
+                labelForId="password"
+                id="password"
+                formControlName="password"
               />
+              <div
+                class="invalid-feedback"
+                *ngIf="form.get('password')?.hasError('minlength')"
+              >
+                Must be at least 12 characters!
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="form.get('password')?.hasError('hasNumber')"
+              >
+                Must contain at least 1 number!
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="form.get('password')?.hasError('hasCapitalCase')"
+              >
+                Must contain at least 1 in Capital Case!
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="form.get('password')?.hasError('hasSmallCase')"
+              >
+                Must contain at least 1 Letter in Small Case!
+              </div>
+              <div
+                class="invalid-feedback"
+                *ngIf="form.get('password')?.hasError('hasSpecialCharacters')"
+              >
+                Must contain at least 1 Special Character!
+              </div>
             </div>
             <div class="form-group mb-3">
-              <label class="label" for="password">Repeat Password</label>
+              <label class="label" for="matchingPassword"
+                >Repeat Password</label
+              >
               <input
                 type="password"
                 class="form-control"
+                [ngClass]="{
+                  'is-invalid': form.get('matchingPassword')?.errors
+                }"
                 placeholder="Password"
                 required=""
+                labelForId="matchingPassword"
+                id="matchingPassword"
+                formControlName="matchingPassword"
               />
+              <div class="invalid-feedback">Passwords must match</div>
             </div>
             <div class="form-group mb-3">
               <label class="label" for="year">Year of birth</label>
@@ -97,19 +163,27 @@
               <div class="form-check">
                 <input
                   class="form-check-input"
+                  [ngClass]="{ 'is-invalid': form.get('terms')?.errors }"
                   type="checkbox"
                   value=""
-                  id="flexCheckDefault"
+                  labelForId="terms"
+                  formControlName="terms"
+                  required
                 />
-                <label class="form-check-label" for="flexCheckDefault">
+                <label for="terms">
                   Accept <a href="#">terms and conditions</a>
                 </label>
+                <div class="invalid-feedback">
+                  You must agree before submitting
+                </div>
               </div>
             </div>
             <div class="form-group">
               <button
-                type="submit"
+                type="button"
                 class="form-control btn btn-primary rounded submit px-3"
+                [ngClass]="{ disabled: form.invalid }"
+                (click)="onRegister()"
               >
                 Register
               </button>

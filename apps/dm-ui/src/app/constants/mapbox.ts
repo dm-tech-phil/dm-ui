@@ -1,3 +1,3 @@
 export const mapbox = {
-  accessToken: 'XXXXXXXXXXX',
+  accessToken: 'XXXXX',
 };

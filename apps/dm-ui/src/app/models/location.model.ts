@@ -1,4 +1,4 @@
-export interface MapBoxResponse {
+export interface MapBoxSearchResponse {
   suggestions: Suggestion[];
   attribution: string;
 }
@@ -6,6 +6,7 @@ export interface MapBoxResponse {
 export interface Suggestion {
   name: string;
   context: Context;
+  mapbox_id: string;
   [key: string]: unknown;
 }
 
@@ -33,4 +34,32 @@ export interface Location {
   name: string;
   country: Country;
   region: Region;
+  mapBoxId: string;
+  coordinates: Coordinates;
+}
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export interface MapBoxRetrieveResponse {
+  attribution: string;
+  features: Feature[];
+}
+
+export interface Feature {
+  type: string;
+  geometry: Geometry;
+  properties: Properties;
+}
+
+export interface Geometry {
+  coordinates: string[];
+  geometry: string;
+}
+
+export interface Properties {
+  coordinates: Coordinates;
+  [key: string]: unknown;
 }

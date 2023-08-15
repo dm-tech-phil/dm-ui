@@ -16,6 +16,7 @@
     "@angular/router": "~16.1.0",
     "@ng-bootstrap/ng-bootstrap": "^15.1.0",
     "@ng-select/ng-select": "^11.1.1",
+    "@ngrx/component-store": "^16.2.0",
     "@nx/angular": "16.6.0",
     "@popperjs/core": "^2.11.8",
     "@types/mapbox-gl": "^2.7.12",

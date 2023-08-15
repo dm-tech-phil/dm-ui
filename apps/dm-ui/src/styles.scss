@@ -2,3 +2,91 @@
 @import 'bootstrap/scss/bootstrap';
 @import '~@ng-select/ng-select/themes/default.theme.css';
 //@import '~mapbox-gl/dist/mapbox-gl.css';
+
+:root {
+  --jade: #21d0b8;
+  --mulberry: #242530;
+  //--pewter : #96A8A1;
+  --lapis: #3f7fe8;
+  --white: #ffffff;
+  --pewter: #515366;
+  --marigold: #f9b235;
+  --pale-jade: #e8faf8;
+  --pale-lapis: #eff4fe;
+  --cloud: #94969f;
+  // --persimmon: #FF6458;
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+p {
+  font-size: 20px;
+  font-weight: 400;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 100px;
+  font-family: 'Forum', sans-serif;
+}
+
+h2 {
+  font-size: 60px;
+  font-family: 'Forum', sans-serif;
+}
+
+h3 {
+  font-size: 40px;
+  font-family: 'Forum', sans-serif;
+}
+
+label {
+  font-weight: 400;
+  font-family: 'Poppins', sans-serif;
+}
+
+.section_spacing {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.section_top_spacing {
+  padding-top: 120px;
+}
+
+.section_bottom_spacing {
+  padding-bottom: 120px;
+}
+
+@media (max-width: 1199px) {
+  h1,
+  h2 {
+    font-size: 40px;
+    line-height: 60px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+}
+
+.fader-gradient-background {
+  background-image: linear-gradient(#d2e2f9, #d3f8f3);
+}
+
+.global-gradient-background {
+  background-image: linear-gradient(#a3c2f5, #91eee1);
+}
+
+/* Overrides for bootstrap */
+.invalid-feedback {
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+}

@@ -1,15 +1,20 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {
-  Subject,
-  catchError,
-  concat,
-  distinctUntilChanged,
-  of,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Subject, catchError, concat, debounceTime, distinctUntilChanged, filter, of, switchMap, takeUntil, tap } from 'rxjs';
 import { MapService } from '../../services/map.service';
-import { Location } from '../../models/location.model';
+import { Coordinates, Location } from '../../models/location.model';
+import {
+  AbstractControl,
+  AbstractControlOptions,
+  FormBuilder,
+  FormControl,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { RegistrationRequest } from '../../models/registration.model';
+import { RegistrationStore } from '../../services/registration.store';
+import { ActivatedRoute } from '@angular/router';
+import { MapboxStore } from '../../services/mapbox.store';
 
 @Component({
   selector: 'dmui-registration',
@@ -17,40 +22,141 @@ import { Location } from '../../models/location.model';
   styleUrls: ['./registration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegistrationComponent {
-  constructor(private readonly mapService: MapService) {}
+export class RegistrationComponent implements OnInit {
+  emailParam = this.route.snapshot.queryParamMap.get('email') ?? '';
 
-  readonly birthYears = Array.from(
-    { length: 30 },
-    (x, i) => new Date().getFullYear() - 13 - i
+  form = this.formBuilder.group(
+    {
+      displayName: new FormControl('', [Validators.required]),
+      email: new FormControl(this.emailParam, [Validators.required, Validators.email]),
+      password: new FormControl(
+        '',
+        Validators.compose([
+          // 1. Password Field is Required
+          Validators.required,
+          // 2. check whether the entered password has a number
+          this.patternValidator(/\d/, { hasNumber: true }),
+          // 3. check whether the entered password has upper case letter
+          this.patternValidator(/[A-Z]/, { hasCapitalCase: true }),
+          // 4. check whether the entered password has a lower-case letter
+          this.patternValidator(/[a-z]/, { hasSmallCase: true }),
+          // 5. check whether the entered password has a special character
+          this.patternValidator(/[.!@#$%^&*()_+\-=]/, {
+            hasSpecialCharacters: true,
+          }),
+          // 6. Has a minimum length of 12 characters
+          Validators.minLength(12),
+        ])
+      ),
+      matchingPassword: new FormControl('', Validators.required),
+      terms: new FormControl(false, Validators.requiredTrue),
+    },
+    { validator: this.passwordMatch } as AbstractControlOptions
   );
+
+  errorMessages$ = this.registrationStore.errorMessages$;
+
+  constructor(
+    private readonly registrationStore: RegistrationStore,
+    private readonly mapboxStore: MapboxStore,
+    private readonly formBuilder: FormBuilder,
+    private readonly route: ActivatedRoute
+  ) {
+    const unsubscribed$ = new Subject<void>();
+
+    this.mapboxStore.locationDetails$
+      .pipe(
+        takeUntil(unsubscribed$),
+        tap((locationDetails) => {
+          if (locationDetails) {
+            this.coordinates = locationDetails.features[0].properties.coordinates;
+          }
+          unsubscribed$.next();
+          unsubscribed$.complete();
+        })
+      )
+      .subscribe();
+  }
+
+  readonly birthYears = Array.from({ length: 30 }, (x, i) => new Date().getFullYear() - 13 - i);
 
   region = '';
   country = '';
+  city = '';
+  coordinates: Coordinates | undefined;
 
   locationsInput$ = new Subject<string>();
+  locations$ = this.mapboxStore.locations$;
 
-  locations$ = concat(
-    of([]), // default items
-    this.locationsInput$.pipe(
-      distinctUntilChanged(),
-      tap(() => (this.locationsLoading = true)),
-      switchMap((term) =>
-        this.mapService.getLocations(term).pipe(
-          catchError(() => of([])), // empty list on error
-          tap(() => (this.locationsLoading = false))
-        )
+  ngOnInit(): void {
+    //const unsubscribed$ = new Subject<void>();
+    this.locationsInput$
+      .pipe(
+        //takeUntil(unsubscribed$),
+        filter((term) => term?.length >= 2),
+        debounceTime(200),
+        tap((term) => {
+          this.mapboxStore.getLocations(term);
+          //unsubscribed$.next();
+          //unsubscribed$.complete();
+        })
       )
-    )
-  );
-  locationsLoading = false;
+      .subscribe();
+  }
 
   onLocationChange(location: Location) {
+    if (location.name) {
+      this.city = location.name;
+    }
     if (location.country) {
       this.country = location.country.name;
     }
     if (location.region) {
       this.region = location.region.name;
     }
+    this.mapboxStore.getLocationDetails(location.mapBoxId);
+  }
+
+  passwordMatch(formGroup: AbstractControl) {
+    const passwordControl = formGroup.get('password');
+    const confirmPasswordControl = formGroup.get('matchingPassword');
+
+    if (!passwordControl || !confirmPasswordControl) {
+      return null;
+    }
+
+    const password: string = passwordControl.value;
+    const confirmPassword: string = confirmPasswordControl.value;
+
+    if (!confirmPassword.length) {
+      return null;
+    }
+
+    if (password !== confirmPassword) {
+      confirmPasswordControl.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    } else {
+      return null;
+    }
+  }
+
+  patternValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const valid = regex.test(control.value);
+      return valid ? null : error;
+    };
+  }
+
+  onRegister(): void {
+    const registrationRequest: RegistrationRequest = {
+      userId: this.form.get('displayName')?.value ?? '',
+      displayName: this.form.get('displayName')?.value ?? '',
+      email: this.form.get('email')?.value ?? '',
+      password: this.form.get('password')?.value ?? '',
+      country: this.country,
+      city: this.city,
+      mapBoxId: `${this.coordinates?.latitude},${this.coordinates?.longitude}`,
+    };
+    this.registrationStore.register(registrationRequest);
   }
 }
