@@ -1,8 +1,12 @@
-export interface RegistrationRequest {
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface User {
   userId: string;
   displayName: string;
   email: string;
-  password: string;
   //birthYear: number;
   country: string;
   city: string;

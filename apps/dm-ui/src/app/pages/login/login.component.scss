@@ -1,35 +1,41 @@
 .img {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center; 
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 .wrap {
-    width: 100%;
-    overflow: hidden;
-    background: #fff;
-    border-radius: 8px;
-    -webkit-box-shadow: 5px 15px 40px -15px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 5px 15px 30px -15px rgba(0, 0, 0, 0.3);
-    box-shadow: 5px 15px 30px -15px rgba(0, 0, 0, 0.3); 
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 8px;
+  -webkit-box-shadow: 5px 15px 40px -15px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 5px 15px 30px -15px rgba(0, 0, 0, 0.3);
+  box-shadow: 5px 15px 30px -15px rgba(0, 0, 0, 0.3);
 }
 
-.img, .login-wrap {
-    width: 50%; 
+.img,
+.login-wrap {
+  width: 50%;
 }
 @media (max-width: 991.98px) {
-    .img, .login-wrap {
-        width: 100%; 
-    } 
+  .img,
+  .login-wrap {
+    width: 100%;
+  }
 }
 
 @media (max-width: 767.98px) {
-    .wrap .img {
-        height: 250px; 
-    } 
+  .wrap .img {
+    height: 250px;
+  }
+}
+
+.error-messages {
+  margin-bottom: 0;
 }
 
 .login-wrap {
-    position: relative;
-    background: #ddefff;
-}  
+  position: relative;
+  background: #ddefff;
+}

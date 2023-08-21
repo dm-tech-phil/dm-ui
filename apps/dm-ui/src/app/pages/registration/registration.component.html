@@ -2,12 +2,13 @@
   <div class="row justify-content-center">
     <div class="col-md-12 col-lg-10">
       <div
-        *ngIf="(errorMessages$ | async)?.length ?? 0 > 0"
-        class="alert alert-danger"
+        *ngIf="(messages$ | async)?.length ?? 0 > 0"
+        class="alert"
+        [ngClass]="{ 'alert-danger': (isSuccess$ | async) === false, 'alert-success': (isSuccess$ | async) === true }"
         role="alert"
       >
         <ul class="error-messages">
-          <li *ngFor="let message of errorMessages$ | async">
+          <li *ngFor="let message of messages$ | async">
             {{ message.message }}
           </li>
         </ul>
@@ -15,10 +16,7 @@
 
       <div class="wrap d-md-flex">
         <!-- Photo by Cytonn Photography from Pexels: https://www.pexels.com/photo/person-holding-gray-twist-pen-and-white-printer-paper-on-brown-wooden-table-955389/ -->
-        <div
-          class="img"
-          style="background-image: url(assets/images/registration.jpg)"
-        ></div>
+        <div class="img" style="background-image: url(assets/images/registration.jpg)"></div>
         <div class="fader-gradient-background login-wrap p-4 p-md-5">
           <div class="d-flex">
             <div>
@@ -37,9 +35,7 @@
                 labelForId="email"
                 formControlName="email"
               />
-              <div class="invalid-feedback">
-                Please enter a valid email address
-              </div>
+              <div class="invalid-feedback">Please enter a valid email address</div>
             </div>
             <div class="form-group mb-3">
               <label class="label" for="displayName">Username (handle)</label>
@@ -53,10 +49,7 @@
                 labelForId="displayName"
                 formControlName="displayName"
               />
-              <div class="invalid-feedback">
-                The display name will be displayed when you publish posts or
-                comments and has to be unique
-              </div>
+              <div class="invalid-feedback">The display name will be displayed when you publish posts or comments and has to be unique</div>
             </div>
             <div class="form-group mb-3">
               <label class="label" for="password">New Password</label>
@@ -70,41 +63,20 @@
                 id="password"
                 formControlName="password"
               />
-              <div
-                class="invalid-feedback"
-                *ngIf="form.get('password')?.hasError('minlength')"
-              >
-                Must be at least 12 characters!
-              </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="form.get('password')?.hasError('hasNumber')"
-              >
-                Must contain at least 1 number!
-              </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="form.get('password')?.hasError('hasCapitalCase')"
-              >
+              <div class="invalid-feedback" *ngIf="form.get('password')?.hasError('minlength')">Must be at least 12 characters!</div>
+              <div class="invalid-feedback" *ngIf="form.get('password')?.hasError('hasNumber')">Must contain at least 1 number!</div>
+              <div class="invalid-feedback" *ngIf="form.get('password')?.hasError('hasCapitalCase')">
                 Must contain at least 1 in Capital Case!
               </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="form.get('password')?.hasError('hasSmallCase')"
-              >
+              <div class="invalid-feedback" *ngIf="form.get('password')?.hasError('hasSmallCase')">
                 Must contain at least 1 Letter in Small Case!
               </div>
-              <div
-                class="invalid-feedback"
-                *ngIf="form.get('password')?.hasError('hasSpecialCharacters')"
-              >
+              <div class="invalid-feedback" *ngIf="form.get('password')?.hasError('hasSpecialCharacters')">
                 Must contain at least 1 Special Character!
               </div>
             </div>
             <div class="form-group mb-3">
-              <label class="label" for="matchingPassword"
-                >Repeat Password</label
-              >
+              <label class="label" for="matchingPassword">Repeat Password</label>
               <input
                 type="password"
                 class="form-control"
@@ -120,44 +92,46 @@
               <div class="invalid-feedback">Passwords must match</div>
             </div>
             <div class="form-group mb-3">
-              <label class="label" for="year">Year of birth</label>
+              <label class="label" for="birthYear">Year of birth</label>
               <ng-select
+                required=""
+                formControlName="birthYear"
                 [items]="birthYears"
-                labelForId="year"
+                labelForId="birthYear"
                 autocomplete="off"
+                [ngClass]="{ 'is-invalid': form.get('birthYear')?.invalid }"
               >
               </ng-select>
+              <div class="invalid-feedback">Year of birth is required</div>
             </div>
 
             <div class="form-group mb-3">
-              <label class="label" for="city"
-                >Nearest city, town or village</label
-              >
+              <label class="label" for="city">Nearest city, town or village</label>
               <ng-select
                 [items]="locations$ | async"
-                bindLabel="name"
-                bindValue="name"
+                bindLabel="city"
+                bindValue="city"
                 [typeahead]="locationsInput$"
                 autocomplete="off"
                 labelForId="city"
+                formControlName="city"
                 (change)="onLocationChange($event)"
+                [ngClass]="{ 'is-invalid': form.get('city')?.invalid }"
               >
                 <ng-template ng-label-tmp let-item="item">
-                  <span
-                    >{{ item.name }} (<small *ngIf="!!item.region"
-                      >{{ item.region?.name }}, </small
-                    ><small>{{ item.country?.name }}</small
+                  <span *ngIf="!!item.city"
+                    >{{ item.city }} (<small *ngIf="!!item.region">{{ item.region?.name }}, </small><small>{{ item.country?.name }}</small
                     >)
                   </span>
                 </ng-template>
                 <ng-template ng-option-tmp let-item="item">
                   <div>
-                    <span>{{ item.name }}</span>
+                    <span>{{ item.city }}</span>
                   </div>
-                  <small *ngIf="!!item.region">{{ item.region?.name }}, </small
-                  ><small>{{ item.country?.name }}</small>
+                  <small *ngIf="!!item.region">{{ item.region?.name }}, </small><small>{{ item.country?.name }}</small>
                 </ng-template>
               </ng-select>
+              <div class="invalid-feedback">City is required</div>
             </div>
             <div class="form-group mb-3">
               <div class="form-check">
@@ -170,12 +144,8 @@
                   formControlName="terms"
                   required
                 />
-                <label for="terms">
-                  Accept <a href="#">terms and conditions</a>
-                </label>
-                <div class="invalid-feedback">
-                  You must agree before submitting
-                </div>
+                <label for="terms"> Accept <a href="#">terms and conditions</a> </label>
+                <div class="invalid-feedback">You must agree before submitting</div>
               </div>
             </div>
             <div class="form-group">

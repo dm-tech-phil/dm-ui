@@ -4,12 +4,7 @@ import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  Location,
-  MapBoxRetrieveResponse,
-  MapBoxSearchResponse,
-  Suggestion,
-} from '../models/location.model';
+import { Location, MapBoxRetrieveResponse, MapBoxSearchResponse, Suggestion } from '../models/location.model';
 import { mapbox } from '../constants/mapbox';
 
 @Injectable({
@@ -25,9 +20,7 @@ export class MapService {
         .get<MapBoxSearchResponse>(
           `https://api.mapbox.com/search/searchbox/v1/suggest?q=${term}&language=en&types=city&session_token=${this.sessionToken}&access_token=${mapbox.accessToken}`
         )
-        .pipe(
-          map((response) => this.convertResultToLocations(response.suggestions))
-        );
+        .pipe(map((response) => this.convertResultToLocations(response.suggestions)));
     } else {
       return of([]);
     }
@@ -43,9 +36,10 @@ export class MapService {
     return suggestions.map(
       (suggestion) =>
         ({
-          name: suggestion.name,
+          city: suggestion.name,
           country: suggestion.context.country,
           region: suggestion.context.region,
+          district: suggestion.context.district,
           mapBoxId: suggestion.mapbox_id,
         } as Location)
     );

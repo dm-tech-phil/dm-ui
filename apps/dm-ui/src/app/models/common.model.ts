@@ -3,7 +3,7 @@ export interface ServiceResponse {
   message: string;
 }
 
-export interface ErrorMessage {
+export interface Message {
   message: string;
   code: string;
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
-import { RegistrationService } from './registration.service';
-import { RegistrationRequest } from '../models/registration.model';
 import { Message } from '../models/common.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoginRequest, User } from '../models/login.model';
+import { LoginService } from './login.service';
 
 interface State {
   loading: boolean;
@@ -22,10 +22,12 @@ const initialState: State = {
   providedIn: 'root',
 })
 @Injectable()
-export class RegistrationStore extends ComponentStore<State> {
-  constructor(private registrationService: RegistrationService) {
+export class LoginStore extends ComponentStore<State> {
+  constructor(private loginService: LoginService) {
     super(initialState);
   }
+
+  user: User | undefined;
 
   readonly updateLoading = this.updater<boolean>((state, loading) => ({
     ...state,
@@ -42,23 +44,36 @@ export class RegistrationStore extends ComponentStore<State> {
   }));
   readonly messages$ = this.select((state) => state.messages);
 
-  readonly register = this.effect((loader$: Observable<RegistrationRequest>) =>
+  readonly login = this.effect((loader$: Observable<LoginRequest>) =>
     loader$.pipe(
       tap(() => this.updateLoading(true)),
-      switchMap((registrationRequest) =>
-        this.registrationService.register(registrationRequest).pipe(
+      switchMap((loginRequest) =>
+        this.loginService.register(loginRequest).pipe(
           tap((isSuccess: boolean) => {
             this.updateMessages([
               {
-                message: 'Registration successful',
+                message: 'Login successful',
                 code: 'SUCCESS',
               },
             ]);
+            this.user = {
+              userId: loginRequest.username,
+              displayName: 'StubUser',
+              email: loginRequest.username,
+              country: 'StubCountry',
+              city: 'StubCity',
+              latitude: 0,
+              longitude: 0,
+            };
             this.updateIsSuccess(isSuccess);
           }),
-          catchError((response: HttpErrorResponse) => {
-            console.error(response);
-            this.updateMessages([response.error]);
+          catchError(() => {
+            this.updateMessages([
+              {
+                message: 'An incorrect username or password was specified.',
+                code: 'FAILURE',
+              },
+            ]);
             this.updateIsSuccess(false);
             return of(undefined);
           }),

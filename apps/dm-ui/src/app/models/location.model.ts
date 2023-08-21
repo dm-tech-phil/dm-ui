@@ -13,6 +13,7 @@ export interface Suggestion {
 export interface Context {
   country: Country;
   region: Region;
+  district: District;
   [key: string]: unknown;
 }
 
@@ -30,10 +31,16 @@ export interface Region {
   region_code_full: string;
 }
 
-export interface Location {
+export interface District {
+  id: string;
   name: string;
+}
+
+export interface Location {
+  city: string;
   country: Country;
-  region: Region;
+  region?: Region;
+  district?: District;
   mapBoxId: string;
   coordinates: Coordinates;
 }

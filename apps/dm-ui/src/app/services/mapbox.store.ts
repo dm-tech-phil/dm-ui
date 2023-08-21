@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, catchError, filter, of, switchMap, tap } from 'rxjs';
-import { ErrorMessage } from '../models/common.model';
+import { Message } from '../models/common.model';
 import { MapService } from './map.service';
 import { Location, MapBoxRetrieveResponse } from '../models/location.model';
 
 interface State {
   loading: boolean;
-  errorMessages: ErrorMessage[];
+  errorMessages: Message[];
   locations: Location[];
   locationDetails: MapBoxRetrieveResponse | null;
 }
@@ -31,7 +31,7 @@ export class MapboxStore extends ComponentStore<State> {
   readonly updateLoading = this.updater<boolean>((state, loading) => ({ ...state, loading }));
   readonly loading$ = this.select((state) => state.loading);
 
-  readonly updateErrorMessages = this.updater<ErrorMessage[]>((state, errorMessages) => ({ ...state, errorMessages }));
+  readonly updateErrorMessages = this.updater<Message[]>((state, errorMessages) => ({ ...state, errorMessages }));
   readonly errorMessages$ = this.select((state) => state.errorMessages);
 
   readonly updateLocations = this.updater<Location[]>((state, locations) => ({ ...state, locations }));
@@ -51,7 +51,7 @@ export class MapboxStore extends ComponentStore<State> {
               {
                 message: error,
                 code: 'ERROR',
-              } as ErrorMessage,
+              } as Message,
             ]);
             return of([]);
           })
@@ -73,7 +73,7 @@ export class MapboxStore extends ComponentStore<State> {
               {
                 message: error,
                 code: 'ERROR',
-              } as ErrorMessage,
+              } as Message,
             ]);
             return of([]);
           })

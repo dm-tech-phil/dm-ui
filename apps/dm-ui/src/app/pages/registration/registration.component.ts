@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Subject, catchError, concat, debounceTime, distinctUntilChanged, filter, of, switchMap, takeUntil, tap } from 'rxjs';
-import { MapService } from '../../services/map.service';
+import { Subject, debounceTime, filter, takeUntil, tap } from 'rxjs';
 import { Coordinates, Location } from '../../models/location.model';
 import {
   AbstractControl,
@@ -49,12 +48,15 @@ export class RegistrationComponent implements OnInit {
         ])
       ),
       matchingPassword: new FormControl('', Validators.required),
+      birthYear: new FormControl('', Validators.required),
+      city: new FormControl('', Validators.required),
       terms: new FormControl(false, Validators.requiredTrue),
     },
     { validator: this.passwordMatch } as AbstractControlOptions
   );
 
-  errorMessages$ = this.registrationStore.errorMessages$;
+  messages$ = this.registrationStore.messages$;
+  isSuccess$ = this.registrationStore.isSuccess$;
 
   constructor(
     private readonly registrationStore: RegistrationStore,
@@ -105,11 +107,11 @@ export class RegistrationComponent implements OnInit {
   }
 
   onLocationChange(location: Location) {
-    if (location.name) {
-      this.city = location.name;
+    if (location.city) {
+      this.city = location.city;
     }
     if (location.country) {
-      this.country = location.country.name;
+      this.country = location.country.country_code;
     }
     if (location.region) {
       this.region = location.region.name;
@@ -149,13 +151,15 @@ export class RegistrationComponent implements OnInit {
 
   onRegister(): void {
     const registrationRequest: RegistrationRequest = {
-      userId: this.form.get('displayName')?.value ?? '',
+      userId: this.form.get('email')?.value ?? '',
       displayName: this.form.get('displayName')?.value ?? '',
       email: this.form.get('email')?.value ?? '',
       password: this.form.get('password')?.value ?? '',
       country: this.country,
       city: this.city,
-      mapBoxId: `${this.coordinates?.latitude},${this.coordinates?.longitude}`,
+      //birthYear: this.form.get('birthYear')?.value ?? 0,
+      latitude: this.coordinates?.latitude ?? 0,
+      longitude: this.coordinates?.longitude ?? 0,
     };
     this.registrationStore.register(registrationRequest);
   }
