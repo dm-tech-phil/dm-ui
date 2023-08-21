@@ -1,78 +1,39 @@
 <div class="container">
   <div class="row justify-content-center">
-    <img style="width: 150px" src="assets/images/logo-DM-dark.png" />
-    <h1 class="row justify-content-center display-2">Change Makers</h1>
     <div class="col-md-12 col-lg-10">
+      <div
+        *ngIf="(messages$ | async)?.length ?? 0 > 0"
+        class="alert"
+        [ngClass]="{ 'alert-danger': (isSuccess$ | async) === false, 'alert-success': (isSuccess$ | async) === true }"
+        role="alert"
+      >
+        <ul class="error-messages">
+          <li *ngFor="let message of messages$ | async">
+            {{ message.message }}
+          </li>
+        </ul>
+      </div>
+
       <div class="wrap d-md-flex">
         <!-- Photo by Diva Plavalaguna from Pexels: https://www.pexels.com/photo/close-up-of-people-bumping-fists-6146704/ -->
-        <div
-          class="img"
-          style="background-image: url(assets/images/login.jpg)"
-        ></div>
+        <div class="img" style="background-image: url(assets/images/login.jpg)"></div>
         <div class="login-wrap p-4 p-md-5">
           <div class="d-flex">
             <div>
               <h3 class="mb-4">Sign In</h3>
             </div>
-            <!-- <div class="w-100">
-            <p class="social-media d-flex justify-content-end">
-              <a
-                href="#"
-                class="social-icon d-flex align-items-center justify-content-center"
-                ><span class="fa fa-facebook"></span
-              ></a>
-              <a
-                href="#"
-                class="social-icon d-flex align-items-center justify-content-center"
-                ><span class="fa fa-twitter"></span
-              ></a>
-            </p>
-          </div> -->
           </div>
-          <form action="#" class="signin-form">
+          <form [formGroup]="form" class="signin-form">
             <div class="form-group mb-3">
               <label class="label" for="name">Email address</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Username"
-                required=""
-              />
-              <!-- <div
-              data-lastpass-icon-root="true"
-              style="
-                position: relative !important;
-                height: 0px !important;
-                width: 0px !important;
-                float: left !important;
-              "
-            ></div> -->
+              <input type="text" formControlName="username" class="form-control" placeholder="Username" required="" />
             </div>
             <div class="form-group mb-3">
               <label class="label" for="password">Password</label>
-              <input
-                type="password"
-                class="form-control"
-                placeholder="Password"
-                required=""
-              />
-              <!-- <div
-              data-lastpass-icon-root="true"
-              style="
-                position: relative !important;
-                height: 0px !important;
-                width: 0px !important;
-                float: left !important;
-              "
-            ></div> -->
+              <input type="password" formControlName="password" class="form-control" placeholder="Password" required="" />
             </div>
             <div class="form-group">
-              <button
-                type="submit"
-                class="form-control btn btn-primary rounded submit px-3"
-              >
-                Sign In
-              </button>
+              <button type="button" class="form-control btn btn-primary rounded submit px-3" (click)="onLogin()">Sign In</button>
             </div>
             <div class="form-group d-md-flex">
               <div class="w-100 text-left">
@@ -82,29 +43,13 @@
                   <span class="checkmark"></span>
                 </label>
               </div>
-              <div class="w-100 text-md-right">
+              <div class="w-100 text-md-end">
                 <a href="#">Forgot Password</a>
               </div>
             </div>
           </form>
-          <!-- <p class="text-center">
-          Not a member? <a data-toggle="tab" href="#signup">Sign Up</a>
-        </p> -->
         </div>
       </div>
     </div>
   </div>
-  <!-- <div class="mb-3">
-  <label for="exampleFormControlInput1" class="form-label">Email address</label>
-  <input
-    type="email"
-    class="form-control"
-    id="exampleFormControlInput1"
-    placeholder="name@example.com"
-  />
-</div>
-<div class="mb-3">
-  <label for="inputPassword" class="form-label">Password</label>
-  <input type="password" class="form-control" id="inputPassword" />
-</div> -->
 </div>

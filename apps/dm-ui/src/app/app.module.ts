@@ -10,22 +10,19 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegistrationComponent } from './pages/registration/registration.component';
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HomeComponent } from './pages/home/home.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NxWelcomeComponent,
-    LoginComponent,
-    RegistrationComponent,
-  ],
+  declarations: [AppComponent, NxWelcomeComponent, LoginComponent, RegistrationComponent, HomeComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
+    ReactiveFormsModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
     NgSelectModule,
     NgxMapboxGLModule.withConfig({
-      accessToken:
-        'pk.eyJ1Ijoic3BhcXVlOTkiLCJhIjoiY2xreWsya3ZmMTJrYzNsbjFqbTA0aTg2bSJ9.6abeuVuFKsNb28L6J1Inbw',
+      accessToken: 'pk.eyJ1Ijoic3BhcXVlOTkiLCJhIjoiY2xreWsya3ZmMTJrYzNsbjFqbTA0aTg2bSJ9.6abeuVuFKsNb28L6J1Inbw',
     }),
   ],
   providers: [],

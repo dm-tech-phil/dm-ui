@@ -32,17 +32,10 @@
   }
 }
 
+.error-messages {
+  margin-bottom: 0;
+}
+
 .login-wrap {
   position: relative;
-  background: #ddefff;
-}
-
-.map {
-  height: 400px;
-  width: 100%;
-}
-
-mgl-map {
-  height: 100%;
-  width: 100%;
 }
